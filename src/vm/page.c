@@ -1,4 +1,7 @@
 #include "vm/page.h"
+#include "threads/malloc.h"
+#include "threads/vaddr.h"
+#include "threads/palloc.h"
 #include "vm/frame.h"
 
 bool
@@ -20,6 +23,7 @@ new_apt_entry (struct file* file, off_t ofs, uint8_t *upage, uint8_t *kpage,
 	}
 	return false;
 }
+
 bool add_apt_entry(struct addon_page_table *new_entry){
 	struct hash_elem *e=hash_insert(&thread_current()->apt, &new_entry->h_elem);
 	if( e == NULL)
@@ -87,4 +91,7 @@ bool apt_hash_less_func(const struct hash_elem *a, const struct
 	return a_->upage < b_->upage;
 }
 
-
+bool grow_stack(void *addr){
+	new_apt_entry(NULL,0,pg_round_down(addr),NULL,0,0,true,MEMORY);
+	return load_frame(NULL,pg_round_down(addr),0,0,0,true,MEMORY,true);
+}

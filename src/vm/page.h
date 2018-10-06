@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
+#include "filesys/off_t.h"
+#include "threads/thread.h"
 #include <hash.h>
 
 enum page_location{
@@ -27,7 +29,6 @@ struct addon_page_table{
 };
 
 
-
 bool
 new_apt_entry (struct file *file, off_t ofs, uint8_t *upage, uint8_t *kpage,
 		uint32_t read_bytes, uint32_t zero_bytes, bool writable, enum page_location loc);
@@ -42,6 +43,8 @@ void apt_delete(void *vaddr);
 void* lookup_apt(void *addr);
 
 void* lookup_other_apt(struct addon_page_table *apt, void *addr);
+
+bool grow_stack(void *addr);
 
 unsigned apt_hash_hash_function(const struct hash_elem *h_elem,
 			void *aux UNUSED);
